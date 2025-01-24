@@ -65,8 +65,8 @@ def main():
                 # Adiciona formatação de preço
                 df['Preço Formatado'] = df['Preço'].apply(lambda x: f'R$ {x:,.2f}'.replace(',', 'X').replace('.', ',').replace('X', '.'))
                 
-                # Opções de ordenação
-                col1, col2 = st.columns(2)
+                # Opções de ordenação e filtros
+                col1, col2, col3 = st.columns(3)
                 with col1:
                     ordem = st.selectbox(
                         "Ordenar por preço:",
@@ -74,11 +74,21 @@ def main():
                     )
                 
                 with col2:
-                    filtro_frete = st.checkbox("Mostrar apenas produtos com frete grátis")
+                    filtro_frete = st.checkbox("Apenas frete grátis", key="frete")
+                
+                with col3:
+                    condicao = st.multiselect(
+                        "Condição do produto",
+                        ["Novo", "Usado"],
+                        default=["Novo", "Usado"]
+                    )
                 
                 # Aplica filtros
                 if filtro_frete:
                     df = df[df['Frete Grátis'] == 'Sim']
+                
+                if condicao:
+                    df = df[df['Condição'].isin(condicao)]
                 
                 # Ordena DataFrame
                 if ordem == "Menor para maior":

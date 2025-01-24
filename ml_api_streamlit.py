@@ -44,16 +44,16 @@ def main():
     )
     
     st.title("🛍️ Buscador Mercado Livre")
-    st.write("Digite o produto que deseja buscar no Mercado Livre")
+    st.write("Digite o produto que deseja buscar e veja os resultados das 10 primeiras páginas do Mercado Livre")
     
     # Campo de busca
     busca = st.text_input("O que você está procurando?")
     
     if busca:
         with st.spinner('Buscando produtos...'):
-            # Busca produtos das primeiras 3 páginas
+            # Busca produtos das primeiras 10 páginas
             todos_produtos = []
-            for offset in range(0, 150, 50):  # 3 páginas de 50 produtos cada
+            for offset in range(0, 500, 50):  # 10 páginas de 50 produtos cada
                 produtos = buscar_produtos_ml(busca, offset=offset)
                 todos_produtos.extend(produtos)
             

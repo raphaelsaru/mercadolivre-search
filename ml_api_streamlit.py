@@ -36,6 +36,27 @@ def extrair_dados_produto(produto):
         'Vendidos': produto.get('sold_quantity', 0)
     }
 
+def processar_busca_exata(produtos, query):
+    """
+    Filtra produtos para garantir que palavras entre aspas estejam presentes
+    """
+    import re
+    
+    # Encontra todas as palavras entre aspas
+    termos_exatos = re.findall(r'"([^"]*)"', query)
+    
+    if not termos_exatos:
+        return produtos
+    
+    # Filtra os produtos que contêm todas as palavras exatas
+    produtos_filtrados = []
+    for produto in produtos:
+        titulo = produto.get('title', '').lower()
+        if all(termo.lower() in titulo for termo in termos_exatos):
+            produtos_filtrados.append(produto)
+    
+    return produtos_filtrados
+
 def main():
     st.set_page_config(
         page_title="Buscador Mercado Livre",
@@ -45,6 +66,7 @@ def main():
     
     st.title("🛍️ Buscador Mercado Livre")
     st.write("Digite o produto que deseja buscar e veja os resultados das 10 primeiras páginas do Mercado Livre")
+    st.write("💡 Dica: Use aspas para buscar palavras exatas. Exemplo: celular \"samsung\" \"novo\"")
     
     # Campo de busca
     busca = st.text_input("O que você está procurando?")
@@ -56,6 +78,9 @@ def main():
             for offset in range(0, 500, 50):  # 10 páginas de 50 produtos cada
                 produtos = buscar_produtos_ml(busca, offset=offset)
                 todos_produtos.extend(produtos)
+            
+            # Aplica o filtro de busca exata
+            todos_produtos = processar_busca_exata(todos_produtos, busca)
             
             if todos_produtos:
                 # Processa os dados dos produtos

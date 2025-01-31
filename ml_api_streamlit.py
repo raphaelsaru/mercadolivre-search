@@ -30,6 +30,7 @@ def extrair_dados_produto(produto):
     return {
         'Nome': produto.get('title'),
         'Preço': produto.get('price'),
+        'Vendedor': produto.get('seller', {}).get('nickname', 'Não informado'),
         'Link': produto.get('permalink'),
         'Condição': 'Novo' if produto.get('condition') == 'new' else 'Usado',
         'Frete Grátis': 'Sim' if produto.get('shipping', {}).get('free_shipping') else 'Não',
@@ -136,7 +137,7 @@ def main():
                 # Exibe resultados em uma tabela interativa
                 st.dataframe(
                     df[[
-                        'Nome', 'Preço Formatado', 'Condição',
+                        'Nome', 'Vendedor', 'Preço Formatado', 'Condição',
                         'Frete Grátis', 'Vendidos', 'Link'
                     ]],
                     column_config={

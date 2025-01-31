@@ -1,8 +1,12 @@
 spotipy==2.23.0
 yt-dlp==2023.12.30
-selenium==4.16.0
+selenium
 python-dotenv==1.0.0
 requests==2.31.0
 beautifulsoup4==4.12.2
 streamlit==1.29.0
 pandas==2.1.4
+facebook-business==18.0.5
+plotly==5.18.0
+pyperclip
+pyautogui

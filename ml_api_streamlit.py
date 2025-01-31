@@ -27,8 +27,16 @@ def extrair_dados_produto(produto):
     """
     Extrai informações relevantes do produto
     """
+    # Procura o número de peça nos atributos do produto
+    numero_peca = "Não informado"
+    for atributo in produto.get('attributes', []):
+        if atributo.get('id') == 'PART_NUMBER' or 'NUMERO_DE_PECA' in atributo.get('id', '').upper():
+            numero_peca = atributo.get('value_name', 'Não informado')
+            break
+
     return {
         'Nome': produto.get('title'),
+        'Número de Peça': numero_peca,
         'Preço': produto.get('price'),
         'Vendedor': produto.get('seller', {}).get('nickname', 'Não informado'),
         'Link': produto.get('permalink'),
@@ -53,7 +61,15 @@ def processar_busca_exata(produtos, query):
     produtos_filtrados = []
     for produto in produtos:
         titulo = produto.get('title', '').lower()
-        if all(termo.lower() in titulo for termo in termos_exatos):
+        # Procura o número de peça nos atributos
+        numero_peca = ''
+        for atributo in produto.get('attributes', []):
+            if atributo.get('id') == 'PART_NUMBER' or 'NUMERO_DE_PECA' in atributo.get('id', '').upper():
+                numero_peca = atributo.get('value_name', '').lower()
+                break
+        
+        # Verifica se os termos exatos estão no título ou no número de peça
+        if all(termo.lower() in titulo or (numero_peca and termo.lower() in numero_peca) for termo in termos_exatos):
             produtos_filtrados.append(produto)
     
     return produtos_filtrados
